@@ -1,0 +1,74 @@
+-------------------------------------------------------------------------------
+
+MAIN = *HEAD *ITEM
+
+HEAD = "import"     DOTS
+     | "using"      DOTS
+     | "namespace"  DOTS
+
+DOTS = [identifier] *("." [identifier])
+
+ITEM = DECL
+     | DEFN_TYPE
+     | DEFN_VARI
+
+DECL      = "note" [identifier] ":" ("type" | QTYP) ";" 
+
+DEFN_TYPE = "type" [identifier] "=" QTYP ";"
+
+DEFN_VARI = "var" JUDG ?("=" EXPR) ";"
+
+-------------------------------------------------------------------------------
+
+JUDG = [identifier] ":" QTYP
+
+QTYP = "forall" [identifier] TYPE
+     | TYPE
+
+TYPE!= TYP1 ?("->" TYPE)
+
+TYP1!= "(" TYPE ")"
+     | "mut" TYP1               
+     | "ptr" TYP1               
+     | "[" ?(JUDG *("," JUDG)) "]"       
+     | "<" ?(JUDG *("|" JUDG)) ">"       
+     | [identifier]
+
+-------------------------------------------------------------------------------
+
+EXPR = EXP1 *(( "&&" | "||" ) EXP1)
+
+EXP1!= EXP2 *(( "==" | "!=" | "<=" | ">=" | "<" | ">" ) EXP2)
+
+EXP2!= EXP3 *(( "+" | "-" ) EXP3)
+
+EXP3!= EXP4 *(( "*" | "/" ) EXP4)
+
+EXP4!= EXP5 ?("." EXP5)  
+
+EXP5!= EXP6 *( "(" ?(EXPR *("," EXPR)) ")" 
+              |"[" EXPR "]" )
+
+EXP6!= "(" EXPR ")"
+     | [identifier]
+     | LTRL        
+
+LTRL!= LAMB
+     | [string-literal]
+     | [number-literal]
+     | [char-literal]
+     | [bool-literal]
+
+LAMB = "\" "(" ?(JUDG *("," JUDG)) ")" STMT
+
+-------------------------------------------------------------------------------
+
+STMT = "{" *STMT "}"
+     | "break" ";"
+     | "continue" ";"
+     | "if"    "(" EXPR ")" STMT ?("else" STMT)
+     | "while" "(" EXPR ")" STMT ?("else" STMT)
+     | "for"   "(" STMT "," EXPR "," STMT ")" STMT ?("else" STMT)
+     | "defer" STMT  
+     | ITEM
+     | EXPR ?("=" EXPR) ";"                                     

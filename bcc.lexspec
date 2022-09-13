@@ -1,0 +1,13 @@
+*((   
+    !(("--" | "//") *( BCKSL | QUOTE | SPACE | PRINT ) ?NEWLN )
+ |  !(( SPACE | NEWLN ) *( SPACE | NEWLN ))
+ |  ( QUOTE *( BCKSL ( BCKSL | QUOTE | "n" ) | SPACE | PRINT ) QUOTE   ) [string-literal]  
+ |  ( "==" | "!=" | "<=" | ">=" | "&&" | "||"                          ) [symbol] 
+ |  ( "->"                                                             ) [symbol] 
+ |  ( DIGIT *DIGIT ?("." *DIGIT) | "." DIGIT *DIGIT                    ) [number-literal]  
+ |  ( SYMBL | BCKSL                                                    ) [symbol]      
+ |  ( "if" | "else" | "while" | "for" | "continue" | "break" | "defer" ) [keyword]     
+ |  ( "note" | "type" | "var" | "input" | "using" | "namespace"        ) [keyword]     
+ |  ( "forall" | "ptr" | "mut"                                         ) [keyword]         
+ |  ( (ALPHA | "_") *(ALPHA | "_" | DIGIT)                             ) [identifier]  
+))
